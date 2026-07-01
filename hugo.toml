@@ -23,6 +23,17 @@ enableRobotsTXT = true
     name = "카테고리"
     url = "/categories/"
     weight = 3
+  [[menu.main]]
+    name = "아카이브"
+    url = "/archive/"
+    weight = 4
+  [[menu.main]]
+    name = "검색"
+    url = "/search/"
+    weight = 5
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
 
 [markup]
   [markup.goldmark]

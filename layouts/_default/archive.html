@@ -1,0 +1,19 @@
+{{ define "main" }}
+<h1 class="list-title">아카이브</h1>
+{{ $posts := where .Site.RegularPages "Type" "posts" }}
+{{ range $posts.GroupByDate "2006" }}
+<section class="archive-year">
+  <h2>{{ .Key }}</h2>
+  <ul class="archive-list">
+    {{ range .Pages }}
+    <li>
+      <span class="archive-date">{{ .Date.Format "01-02" }}</span>
+      <a href="{{ .Permalink }}">{{ .Title }}</a>
+    </li>
+    {{ end }}
+  </ul>
+</section>
+{{ else }}
+<p>아직 작성된 글이 없습니다.</p>
+{{ end }}
+{{ end }}

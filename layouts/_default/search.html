@@ -1,0 +1,7 @@
+{{ define "main" }}
+<h1 class="list-title">검색</h1>
+<input type="search" id="search-input" class="search-input" placeholder="검색어를 입력하세요" autofocus>
+<section id="search-results" class="post-list"></section>
+<script>window.SEARCH_INDEX_URL = "{{ "index.json" | relURL }}";</script>
+<script src="{{ "js/search.js" | relURL }}" defer></script>
+{{ end }}

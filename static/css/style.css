@@ -3,8 +3,24 @@
   --fg: #1a1a1a;
   --muted: #6b7280;
   --bg: #ffffff;
+  --card-bg: #ffffff;
   --border: #e5e7eb;
   --accent: #2563eb;
+  --code-bg: #f3f4f6;
+  --pill-bg: #eff6ff;
+  --pill-bg-hover: #dbeafe;
+}
+
+[data-theme="dark"] {
+  --fg: #e5e7eb;
+  --muted: #9ca3af;
+  --bg: #111318;
+  --card-bg: #181b21;
+  --border: #2a2e37;
+  --accent: #60a5fa;
+  --code-bg: #1f232b;
+  --pill-bg: #1e293b;
+  --pill-bg-hover: #24344b;
 }
 
 * {
@@ -18,6 +34,7 @@ body {
   color: var(--fg);
   background: var(--bg);
   line-height: 1.7;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .wrap {
@@ -36,8 +53,12 @@ a:hover {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   border-bottom: 1px solid var(--border);
   padding: 1.25rem 0;
+  background: var(--bg);
 }
 
 .site-header .wrap {
@@ -52,10 +73,38 @@ a:hover {
   color: var(--fg);
 }
 
+.site-nav {
+  display: flex;
+  align-items: center;
+}
+
 .site-nav a {
   margin-left: 1rem;
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+#theme-toggle {
+  margin-left: 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--fg);
+  padding: 0.2rem;
+}
+
+.icon-dark {
+  display: none;
+}
+
+[data-theme="dark"] .icon-light {
+  display: none;
+}
+
+[data-theme="dark"] .icon-dark {
+  display: inline;
 }
 
 .content {
@@ -67,6 +116,20 @@ a:hover {
   margin-bottom: 1.5rem;
 }
 
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.breadcrumbs a {
+  color: var(--muted);
+}
+
+.crumb-sep {
+  margin: 0 0.35rem;
+}
+
 .post-list {
   display: flex;
   flex-direction: column;
@@ -74,17 +137,22 @@ a:hover {
 }
 
 .post-card {
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid var(--border);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
 }
 
-.post-card:last-child {
-  border-bottom: none;
-}
-
-.post-date {
+.post-date,
+.post-reading-time {
   font-size: 0.85rem;
   color: var(--muted);
+}
+
+.post-meta-sep {
+  color: var(--muted);
+  margin: 0 0.3rem;
+  font-size: 0.85rem;
 }
 
 .post-categories {
@@ -95,7 +163,7 @@ a:hover {
   display: inline-block;
   font-size: 0.75rem;
   color: var(--accent);
-  background: #eff6ff;
+  background: var(--pill-bg);
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
   margin-right: 0.35rem;
@@ -103,7 +171,7 @@ a:hover {
 
 .post-category:hover {
   text-decoration: none;
-  background: #dbeafe;
+  background: var(--pill-bg-hover);
 }
 
 .post-tags {
@@ -130,7 +198,8 @@ a:hover {
 }
 
 .post-summary {
-  color: #374151;
+  color: var(--fg);
+  opacity: 0.85;
   margin: 0;
 }
 
@@ -151,16 +220,93 @@ a:hover {
 }
 
 .post-content pre {
-  background: #f3f4f6;
+  position: relative;
+  background: var(--code-bg);
   padding: 1rem;
   overflow-x: auto;
   border-radius: 6px;
 }
 
 .post-content code {
-  background: #f3f4f6;
+  background: var(--code-bg);
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
+}
+
+.code-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+}
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--fg);
+  margin-bottom: 1.5rem;
+}
+
+.archive-year {
+  margin-bottom: 2rem;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+}
+
+.archive-list li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.archive-date {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-right: 0.75rem;
+}
+
+#back-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--fg);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+#back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .site-footer {

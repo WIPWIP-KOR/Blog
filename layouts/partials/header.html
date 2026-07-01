@@ -5,6 +5,9 @@
       {{ range .Site.Menus.main }}
       <a href="{{ .URL | relLangURL }}">{{ .Name }}</a>
       {{ end }}
+      <button id="theme-toggle" type="button" aria-label="테마 전환" title="다크/라이트 모드 전환">
+        <span class="icon-light">&#9728;</span><span class="icon-dark">&#9789;</span>
+      </button>
     </nav>
   </div>
 </header>

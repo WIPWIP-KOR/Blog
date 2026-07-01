@@ -1,8 +1,15 @@
 {{ define "main" }}
+<nav class="breadcrumbs">
+  <a href="{{ printf "%s/" (.Site.BaseURL | relURL) }}">홈</a>
+  {{ with .Parent }}<span class="crumb-sep">›</span> <a href="{{ .Permalink }}">{{ .Title }}</a>{{ end }}
+  <span class="crumb-sep">›</span> <span>{{ .Title }}</span>
+</nav>
 <article class="post">
   <header class="post-header">
     <h1>{{ .Title }}</h1>
     <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+    <span class="post-meta-sep">·</span>
+    <span class="post-reading-time">{{ .ReadingTime }}분 읽기</span>
     {{ with .Params.categories }}
     <span class="post-categories">
       {{ range . }}<a class="post-category" href="{{ (urlize (printf "/categories/%s/" .)) | relURL }}">{{ . }}</a>{{ end }}
@@ -20,4 +27,14 @@
   </footer>
   {{ end }}
 </article>
+{{ if or .PrevInSection .NextInSection }}
+<nav class="post-nav">
+  {{ with .PrevInSection }}
+  <a class="post-nav-prev" href="{{ .Permalink }}">← {{ .Title }}</a>
+  {{ end }}
+  {{ with .NextInSection }}
+  <a class="post-nav-next" href="{{ .Permalink }}">{{ .Title }} →</a>
+  {{ end }}
+</nav>
+{{ end }}
 {{ end }}

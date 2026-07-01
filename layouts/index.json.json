@@ -1,0 +1,11 @@
+[
+{{ range $i, $p := (where .Site.RegularPages "Type" "posts") }}{{ if $i }},{{ end }}
+  {
+    "title": {{ $p.Title | jsonify }},
+    "permalink": {{ $p.Permalink | jsonify }},
+    "description": {{ (or $p.Description $p.Summary) | plainify | jsonify }},
+    "tags": {{ $p.Params.tags | jsonify }},
+    "categories": {{ $p.Params.categories | jsonify }}
+  }
+{{ end }}
+]

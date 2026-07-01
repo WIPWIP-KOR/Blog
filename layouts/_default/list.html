@@ -4,6 +4,8 @@
   {{ range .Pages }}
   <article class="post-card">
     <span class="post-date">{{ .Date.Format "2006-01-02" }}</span>
+    <span class="post-meta-sep">·</span>
+    <span class="post-reading-time">{{ .ReadingTime }}분 읽기</span>
     {{ with .Params.categories }}
     <span class="post-categories">
       {{ range . }}<a class="post-category" href="{{ (urlize (printf "/categories/%s/" .)) | relURL }}">{{ . }}</a>{{ end }}
