@@ -87,6 +87,43 @@ a:hover {
   color: var(--muted);
 }
 
+.post-categories {
+  margin-left: 0.6rem;
+}
+
+.post-category {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: #eff6ff;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  margin-right: 0.35rem;
+}
+
+.post-category:hover {
+  text-decoration: none;
+  background: #dbeafe;
+}
+
+.post-tags {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.post-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-right: 0.5rem;
+}
+
+.post-footer {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
 .post-card h2 {
   margin: 0.35rem 0 0.5rem;
   font-size: 1.35rem;
