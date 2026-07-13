@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-14-energy-voucher-cooling-subsidy.png"
 title: "에너지바우처 냉방비 지원금 신청 방법 (2026년 4인 가구 최대 70만 원)"
 date: 2026-07-14
 draft: true
