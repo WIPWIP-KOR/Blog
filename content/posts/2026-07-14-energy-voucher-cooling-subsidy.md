@@ -2,7 +2,7 @@
 thumbnail: "/images/posts/2026-07-14-energy-voucher-cooling-subsidy.png"
 title: "에너지바우처 냉방비 지원금 신청 방법 (2026년 4인 가구 최대 70만 원)"
 date: 2026-07-14
-draft: true
+draft: false
 categories: ["정책"]
 tags: ["에너지바우처", "냉방비 지원금", "에너지바우처 신청방법", "전기요금 지원"]
 description: "생계·의료·주거·교육급여 수급자이면서 노인·영유아·장애인 등 세대원이 있는 가구는 4인 이상 기준 최대 70만 1,300원의 에너지바우처를 받을 수 있습니다. 올해는 냉방·난방 사용 한도 구분이 없어져 여름에 몰아 써도 됩니다."
