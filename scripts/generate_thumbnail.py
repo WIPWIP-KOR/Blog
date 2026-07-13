@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-"""Generate a blog post thumbnail with the Gemini image API and wire it into the post's front matter.
+"""Generate a blog post thumbnail with Cloudflare Workers AI and wire it into the post's front matter.
 
 Usage: python3 scripts/generate_thumbnail.py content/posts/<slug>.md
-Requires GEMINI_API_KEY in the environment.
+Requires CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN in the environment.
 """
-import base64
 import json
 import os
 import re
 import sys
 import urllib.request
 
-MODEL = "gemini-2.5-flash-image"
-API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
+MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
 IMAGES_DIR = "static/images/posts"
 
 
@@ -30,35 +28,45 @@ def get_field(front_matter, key):
 
 def build_prompt(title, description):
     return (
-        "Create a clean, modern flat-illustration thumbnail image for a Korean finance/legal "
-        "information blog post. 1200x630, 16:9-ish landscape composition. "
-        "No text, no letters, no numbers in the image. "
+        "Clean modern flat-illustration thumbnail for a Korean finance/legal "
+        "information blog post, 16:9 landscape composition. No text, no letters, "
+        "no numbers, no watermarks. "
         f"Topic: {title}. Context: {description}. "
-        "Style: minimal flat design, soft color palette, simple geometric shapes and icons "
-        "related to the topic (e.g. documents, buildings, coins, calendar), plenty of "
-        "whitespace, professional and trustworthy tone, no photorealism."
+        "Style: minimal flat design, soft muted color palette, simple geometric "
+        "shapes and icons related to the topic (documents, buildings, coins, "
+        "calendar), plenty of whitespace, professional and trustworthy tone, "
+        "no photorealism."
     )
 
 
-def generate_image(prompt, api_key):
-    body = json.dumps({
-        "contents": [{"parts": [{"text": prompt}]}],
-    }).encode("utf-8")
+def generate_image(prompt, account_id, api_token):
+    url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{MODEL}"
+    body = json.dumps({"prompt": prompt}).encode("utf-8")
     req = urllib.request.Request(
-        f"{API_URL}?key={api_key}",
+        url,
         data=body,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_token}",
+            "Content-Type": "application/json",
+        },
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=120) as resp:
-        payload = json.load(resp)
+        content_type = resp.headers.get("Content-Type", "")
+        raw = resp.read()
 
-    parts = payload["candidates"][0]["content"]["parts"]
-    for part in parts:
-        inline = part.get("inlineData")
-        if inline and inline.get("data"):
-            return base64.b64decode(inline["data"])
-    raise RuntimeError(f"no image data in response: {json.dumps(payload)[:500]}")
+    if content_type.startswith("image/"):
+        return raw
+
+    # Some Workers AI responses come back as JSON with a base64 "result".
+    payload = json.loads(raw)
+    if not payload.get("success", False):
+        raise RuntimeError(f"Workers AI error: {json.dumps(payload)[:500]}")
+    result = payload["result"]
+    if isinstance(result, dict) and "image" in result:
+        import base64
+        return base64.b64decode(result["image"])
+    raise RuntimeError(f"unexpected response shape: {json.dumps(payload)[:500]}")
 
 
 def insert_thumbnail_field(text, front_matter, thumbnail_path):
@@ -70,11 +78,7 @@ def insert_thumbnail_field(text, front_matter, thumbnail_path):
             count=1,
             flags=re.MULTILINE,
         )
-    return text.replace(
-        "---\n\n", f'thumbnail: "{thumbnail_path}"\n---\n\n', 1
-    ) if "---\n\n" in text else re.sub(
-        r"^---\n", f'---\nthumbnail: "{thumbnail_path}"\n', text, count=1
-    )
+    return re.sub(r"^---\n", f'---\nthumbnail: "{thumbnail_path}"\n', text, count=1)
 
 
 def main():
@@ -83,9 +87,10 @@ def main():
         sys.exit(1)
 
     post_path = sys.argv[1]
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        print("GEMINI_API_KEY is not set", file=sys.stderr)
+    account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+    api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
+    if not account_id or not api_token:
+        print("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN must be set", file=sys.stderr)
         sys.exit(1)
 
     with open(post_path, encoding="utf-8") as f:
@@ -98,7 +103,7 @@ def main():
     slug = os.path.splitext(os.path.basename(post_path))[0]
     prompt = build_prompt(title, description)
     print(f"Generating thumbnail for: {title}")
-    image_bytes = generate_image(prompt, api_key)
+    image_bytes = generate_image(prompt, account_id, api_token)
 
     os.makedirs(IMAGES_DIR, exist_ok=True)
     image_path = os.path.join(IMAGES_DIR, f"{slug}.png")
