@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-16-ev-conversion-subsidy.png"
 title: "전기차 전환지원금 신청 방법 (내연차 폐차 시 국고보조금 최대 400만 원)"
 date: 2026-07-16
 draft: true
