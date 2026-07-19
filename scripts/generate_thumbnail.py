@@ -6,7 +6,7 @@ image), and wire the resulting file into the post's front matter.
 
 Usage: python3 scripts/generate_thumbnail.py content/posts/<slug>.md
 Requires GOOGLE_API_KEY in the environment.
-Requires Pillow, google-generativeai, and a Korean-capable font
+Requires Pillow, google-genai, and a Korean-capable font
 (e.g. `apt install fonts-nanum`).
 """
 import io
@@ -14,7 +14,8 @@ import os
 import re
 import sys
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from PIL import Image, ImageDraw, ImageFont
 
 IMAGE_MODEL = "imagen-3.0-generate-002"
@@ -70,19 +71,15 @@ def build_prompt(title, description, tags):
 
 
 def generate_image(prompt, api_key):
-    genai.configure(api_key=api_key)
-    model = genai.ImageGenerationModel(IMAGE_MODEL)
-    result = model.generate_images(prompt=prompt, number_of_images=1)
-    if not result.images:
+    client = genai.Client(api_key=api_key)
+    result = client.models.generate_images(
+        model=IMAGE_MODEL,
+        prompt=prompt,
+        config=types.GenerateImagesConfig(number_of_images=1),
+    )
+    if not result.generated_images:
         raise RuntimeError("Gemini API returned no images")
-
-    image = result.images[0]
-    if hasattr(image, "image_bytes"):
-        return image.image_bytes
-
-    buf = io.BytesIO()
-    image._pil_image.save(buf, format="PNG")
-    return buf.getvalue()
+    return result.generated_images[0].image.image_bytes
 
 
 def find_font():
