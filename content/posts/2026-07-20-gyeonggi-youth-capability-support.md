@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-20-gyeonggi-youth-capability-support.png"
 title: "경기청년 역량강화 기회지원 신청 방법 (2026년 자격증 응시료 최대 30만 원)"
 date: 2026-07-20
 draft: true
