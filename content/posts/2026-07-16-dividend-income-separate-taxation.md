@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-16-dividend-income-separate-taxation.png"
 title: "배당소득 분리과세, 종합과세와 뭐가 다를까 (2026년 배당분부터 시행)"
 date: 2026-07-16
 draft: true
