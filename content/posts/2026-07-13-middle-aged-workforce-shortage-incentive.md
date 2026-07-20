@@ -1,5 +1,4 @@
 ---
-thumbnail: "/images/posts/2026-07-13-middle-aged-workforce-shortage-incentive.png"
 title: "일손부족일자리 동행 인센티브 신청 방법 (2026년 중장년 재취업 지원금 360만원)"
 date: 2026-07-13
 draft: false

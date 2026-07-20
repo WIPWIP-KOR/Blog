@@ -1,5 +1,4 @@
 ---
-thumbnail: "/images/posts/2026-07-14-basic-livelihood-security-benefits.png"
 title: "기초생활수급자 신청 방법 (생계·의료·주거·교육급여 2026년 기준 총정리)"
 date: 2026-07-14
 draft: false

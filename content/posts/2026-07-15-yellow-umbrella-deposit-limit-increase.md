@@ -1,5 +1,4 @@
 ---
-thumbnail: "/images/posts/2026-07-15-yellow-umbrella-deposit-limit-increase.png"
 title: "노란우산공제 납입한도, 월 150만원까지 늘었습니다 (2026년 7월 시행)"
 date: 2026-07-15
 draft: false
