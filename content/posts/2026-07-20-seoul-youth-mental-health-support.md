@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-20-seoul-youth-mental-health-support.png"
 title: "서울시 청년 마음건강 지원사업 3차 신청 방법 (7월 20일~23일, 심야노동청년 우선선발)"
 date: 2026-07-20
 draft: true
