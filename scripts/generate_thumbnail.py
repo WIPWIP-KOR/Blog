@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
-"""Generate a blog post thumbnail with Cloudflare Workers AI, overlay the post
-title on top with Pillow (AI models render Korean text unreliably, so the
-title is composited afterwards instead of being part of the generated image),
-and wire the resulting file into the post's front matter.
+"""Generate a blog post thumbnail with the Gemini API (Imagen), overlay the
+post title on top with Pillow (AI models render Korean text unreliably, so
+the title is composited afterwards instead of being part of the generated
+image), and wire the resulting file into the post's front matter.
 
 Usage: python3 scripts/generate_thumbnail.py content/posts/<slug>.md
-Requires CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN in the environment.
-Requires Pillow and a Korean-capable font (e.g. `apt install fonts-nanum`).
+Requires GOOGLE_API_KEY in the environment.
+Requires Pillow, google-genai, and a Korean-capable font
+(e.g. `apt install fonts-nanum`).
 """
 import io
-import json
 import os
 import re
 import sys
-import urllib.request
 
+from google import genai
+from google.genai import types
 from PIL import Image, ImageDraw, ImageFont
 
-MODEL = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+IMAGE_MODEL = "gemini-3.1-flash-image"
 IMAGES_DIR = "static/images/posts"
 CANVAS_SIZE = (1200, 630)
 FONT_CANDIDATES = [
@@ -69,34 +70,17 @@ def build_prompt(title, description, tags):
     )
 
 
-def generate_image(prompt, account_id, api_token):
-    url = f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{MODEL}"
-    body = json.dumps({"prompt": prompt}).encode("utf-8")
-    req = urllib.request.Request(
-        url,
-        data=body,
-        headers={
-            "Authorization": f"Bearer {api_token}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
+def generate_image(prompt, api_key):
+    client = genai.Client(api_key=api_key)
+    result = client.models.generate_content(
+        model=IMAGE_MODEL,
+        contents=prompt,
+        config=types.GenerateContentConfig(response_modalities=["TEXT", "IMAGE"]),
     )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        content_type = resp.headers.get("Content-Type", "")
-        raw = resp.read()
-
-    if content_type.startswith("image/"):
-        return raw
-
-    # Some Workers AI responses come back as JSON with a base64 "result".
-    payload = json.loads(raw)
-    if not payload.get("success", False):
-        raise RuntimeError(f"Workers AI error: {json.dumps(payload)[:500]}")
-    result = payload["result"]
-    if isinstance(result, dict) and "image" in result:
-        import base64
-        return base64.b64decode(result["image"])
-    raise RuntimeError(f"unexpected response shape: {json.dumps(payload)[:500]}")
+    for part in result.candidates[0].content.parts:
+        if part.inline_data is not None:
+            return part.inline_data.data
+    raise RuntimeError("Gemini API returned no image data")
 
 
 def find_font():
@@ -193,10 +177,9 @@ def main():
         sys.exit(1)
 
     post_path = sys.argv[1]
-    account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
-    api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
-    if not account_id or not api_token:
-        print("CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN must be set", file=sys.stderr)
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        print("GOOGLE_API_KEY must be set", file=sys.stderr)
         sys.exit(1)
 
     with open(post_path, encoding="utf-8") as f:
@@ -210,7 +193,7 @@ def main():
     slug = os.path.splitext(os.path.basename(post_path))[0]
     prompt = build_prompt(title, description, tags)
     print(f"Generating thumbnail for: {title}")
-    raw_image = generate_image(prompt, account_id, api_token)
+    raw_image = generate_image(prompt, api_key)
     image_bytes = compose_thumbnail(raw_image, title)
 
     os.makedirs(IMAGES_DIR, exist_ok=True)
