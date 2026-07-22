@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-22-gangwon-youth-didimdol-double-savings.png"
 title: "강원 청년 디딤돌 2배 적금 신청 방법 (7월 24일 마감, 3년 만기 720만 원)"
 date: 2026-07-22
 draft: true
