@@ -2,7 +2,7 @@
 thumbnail: "/images/posts/2026-07-23-ipo-subscription-deposit-interest-reform.png"
 title: "공모주 청약증거금, 이자 받을 수 있게 달라집니다 (금융위 제도 개선 추진)"
 date: 2026-07-23
-draft: true
+draft: false
 categories: ["재테크"]
 tags: ["공모주 청약증거금 이자", "공모주 제도 개선", "매도대금 담보대출 금리", "공모주 청약 이자 지급"]
 description: "금융위원회가 공모주 청약 시 증권사에 맡기는 청약증거금에 이자를 지급하고, 매도대금 담보대출(매담대) 금리도 낮추는 방안을 추진합니다. 지금까지의 관행과 무엇이 달라질지 정리했습니다."
