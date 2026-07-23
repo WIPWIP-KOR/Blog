@@ -1,4 +1,5 @@
 ---
+thumbnail: "/images/posts/2026-07-24-incheon-thousand-won-brokerage-fee-support.png"
 title: "인천 천원 복비 신청 방법 (전월세 중개보수 최대 30만 원 지원)"
 date: 2026-07-24
 draft: true
